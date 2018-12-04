@@ -30,7 +30,6 @@ class Lights:
             PWM(Pin(blue, Pin.OUT, value=0), freq=self.DEFAULT_FREQ, duty=self.STATE_OFF)
         ]
         self.front_light = None if front is None else PWM(Pin(front, Pin.OUT, value=0), freq=self.DEFAULT_FREQ, duty=self.STATE_OFF)
-        # self.front_light = None if front is None else Pin(front, Pin.OUT, value=0)
         self.tail_light = None if back is None else PWM(Pin(back, Pin.OUT, value=0), freq=self.DEFAULT_FREQ, duty=self.STATE_OFF)
 
     def tail(self, intensity: int):

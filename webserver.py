@@ -19,6 +19,7 @@ class Client(WebSocketClient):
 
     def __init__(self, conn, lights_service: LightsService):
         self.lights_service = lights_service
+        asyncio.get_event_loop().call_soon(lights_service.status_worker(conn))
         super().__init__(conn)
 
     def process(self):

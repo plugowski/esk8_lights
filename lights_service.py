@@ -1,3 +1,4 @@
+from uwebsocket import WebSocketConnection
 from battery import Battery
 from lights import Lights
 import uasyncio as asyncio
@@ -21,6 +22,13 @@ class LightsService:
 
         if action != 'cancel':
             asyncio.get_event_loop().create_task(asyn.Cancellable(getattr(self.lights, 'rgb_' + action), *args, **kwargs)())
+
+    async def status_worker(self, connection: WebSocketConnection, freq: int = 2):
+        """ Worker which updates current status via websocket
+        """
+        while True:
+            connection.write(self.read_status())
+            await asyncio.sleep(freq)
 
     def read_status(self):
         return {**self.battery.status(), **self.lights.status()}
