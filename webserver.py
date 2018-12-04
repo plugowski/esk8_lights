@@ -1,24 +1,24 @@
-import asyn
-import ujson
+from lights_service import LightsService
 from uwebsocket import *
-from lights import Lights
 import uasyncio as asyncio
+import ujson
+import asyn
 
 
 class Server(WebSocketServer):
 
-    def __init__(self, lights: Lights):
-        self.lights = lights
-        super().__init__(2)
+    def __init__(self, lights_service: LightsService):
+        self.lights_service = lights_service
+        super().__init__(3)
 
     def _make_client(self, conn):
-        return Client(conn, self.lights)
+        return Client(conn, self.lights_service)
 
 
 class Client(WebSocketClient):
 
-    def __init__(self, conn, lights: Lights):
-        self.lights = lights
+    def __init__(self, conn, lights_service: LightsService):
+        self.lights_service = lights_service
         super().__init__(conn)
 
     def process(self):
@@ -29,29 +29,26 @@ class Client(WebSocketClient):
                 return
 
             msg = ujson.loads(msg.decode("utf-8"))
-            command = msg.get('command')
+            command = msg.pop('command')
             loop = asyncio.get_event_loop()
 
             if command is not None:
-                if command == 'police':
-                    loop.create_task(asyn.Cancellable(self.lights.rgb_police, group=1)())
-                elif command == 'jump':
-                    loop.create_task(asyn.Cancellable(self.lights.rgb_jump, 1, 1.0, 128, group=1)())
-                elif command == 'fade':
-                    loop.create_task(asyn.Cancellable(self.lights.rgb_fade, 2, group=1)())
-                elif command == 'stop':
-                    loop.call_soon(self.lights.rgb_cancel())
-                else:
-                    loop.call_soon(self.lights.rgb_color(msg.get('value', '#000000')))
 
-                self.connection.write(ujson.dumps(msg))
+                if command in ['front', 'tail', 'color', 'jump', 'fade', 'police', 'cancel']:
+                    loop.call_soon(self.lights_service.action_handler(command, **msg))
+                    self.connection.write(command + ' : ' + ujson.dumps(msg))
+                elif command == 'tasks':
+                    self.connection.write(ujson.dumps(asyn.Cancellable.tasks))
+                elif command == 'status':
+                    self.connection.write(ujson.dumps(self.lights_service.read_status()))
+                else:
+                    raise ValueError('Invalid command! ' + str(command))
+
             else:
-                raise ValueError('Missing command type!')
+                raise ValueError('Missing command!')
 
         except ValueError as error:
             self.connection.write(ujson.dumps({'error': str(error)}))
 
         except ClientClosedError:
-            disconnected = ujson.dumps(['aaaa'])
-            self.connection.write(disconnected)
             self.connection.close()

@@ -3,19 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Evolve Lights</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
 
     <style>
         body {
-            background-color: #222;
+            background-color: #eee;
+            font-family: Helvetica;
         }
 
         div.btn {
             display: inline-block;
             width: 150px;
-            height: 25px;
-            padding: 5px;
+            padding: 10px 5px;
             margin: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        div.btn:hover {
+            background-color: #222 !important;
+            color: #fff;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 10px 5px;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        span.label {
+            display: inline-block;
+            width: 80px;
+            font-weight: bold;
         }
 
         #colorPicker
@@ -84,6 +108,7 @@
             height: 25px;
             cursor: pointer;
         }
+
     </style>
 
     <script type="text/javascript">
@@ -97,37 +122,41 @@
             var $picker = document.getElementById("colorPicker"), picker = tinycolorpicker($picker);
             var ws = new WebSocket("ws://192.168.4.1:80");
 
-            //document.querySelector('input[class="colorInput"]')
-            $picker.addEventListener('change', function(e) {
-                // todo: wysylka do websocketa!
-                //alert(e.target.querySelector('.colorInput').value);
-                ws.send(JSON.stringify({command: "color", value: e.target.querySelector('.colorInput').value}))
-            }, false)
-
             ws.onmessage = function (evt) {
-                resp = JSON.parse(evt.data)
+                //resp = JSON.parse(evt.data)
                 document.getElementById("response").innerHTML = evt.data;
             };
 
-            document.getElementById("police").addEventListener('click', function(e) {
-                e.preventDefault();
-                ws.send(JSON.stringify({command:"police"}));
-            }, false);
+            $picker.addEventListener('change', function(e) {
+                ws.send(JSON.stringify({
+                    command: "color",
+                    hex_color: e.target.querySelector('.colorInput').value,
+                    intensity: parseInt(document.querySelector('input[name="intensity"]').value)
+                }))
+            }, false)
 
-            document.getElementById("fade").addEventListener('click', function(e) {
-                e.preventDefault();
-                ws.send(JSON.stringify({command:"fade"}));
-            }, false);
+            Array.prototype.forEach.call(document.getElementsByClassName("command"), function(element) {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
 
-            document.getElementById("jump").addEventListener('click', function(e) {
-                e.preventDefault();
-                ws.send(JSON.stringify({command:"jump"}));
-            }, false);
+                    var action = element.getAttribute('data-action');
+                    var payload = {command: action}
 
-            document.getElementById("stop").addEventListener('click', function(e) {
-                e.preventDefault();
-                ws.send(JSON.stringify({command:"stop"}));
-            }, false);
+                    if (!['cancel', 'tasks', 'status'].includes(action)) {
+                        payload['intensity'] = parseInt(document.querySelector('input[name="intensity"]').value);
+                    }
+
+                    if (action == 'fade') {
+                        payload['period'] = parseFloat(document.querySelector('input[name="period"]').value);
+                    } else if (action == 'jump') {
+                        payload['mode'] = parseInt(document.querySelector('input[name="mode"]').value);
+                        payload['speed'] = parseFloat(document.querySelector('input[name="speed"]').value);
+                    }
+
+                    ws.send(JSON.stringify(payload));
+
+                }, false);
+            })
         }
 
     </script>
@@ -135,19 +164,43 @@
 </head>
 <body>
 
-    <textarea id="response">response</textarea>
-
-    <div class="btn" id="police" style="background-color: green">Łiłu-łiłu</div>
-    <div class="btn" id="jump" style="background-color: yellow">Łooooooooooo</div>
-    <div class="btn" id="fade" style="background-color: blue">FADE</div>
-
-    <div class="btn" id="stop" style="background-color: red; color: white; font-weight: bold;">STOP</div>
 
     <div id="colorPicker">
         <a class="color"><div class="colorInner"></div></a>
         <div class="track"></div>
         <ul class="dropdown"><li></li></ul>
         <input type="hidden" class="colorInput"/>
+    </div>
+
+    <div style="text-align: center; margin-top: 80px;">
+        <textarea id="response" style="width: 90%; height: 50px; font-family: 'Lucida Console', Monaco, monospace;">response</textarea>
+
+        <hr/>
+
+        <div class="btn command" data-action="front" style="background-color: white;">FRONT</div>
+        <div class="btn command" data-action="tail" style="background-color: darkred; color: white;">TAIL</div>
+
+        <hr/>
+
+
+        <div class="btn command" data-action="police" style="background-color: blue; color: white;">POLICE</div>
+        <div class="btn command" data-action="jump" style="background-color: orange">JUMP</div><br/>
+        <div class="btn command" data-action="fade" style="background-color: limegreen; color: white;">FADE</div>
+
+        <hr/>
+
+
+        <div class="btn command" data-action="tasks" style="background-color: #FFC300; ">SHOW TASKS</div>
+        <div class="btn command" data-action="status" style="background-color: #16A085;">STATUS</div><br/>
+
+        <div class="btn command" data-action="cancel" style="background-color: red; color: white;">STOP</div>
+
+        <hr/>
+
+        <span class="label">Intense: </span><input type="number" min="0" max="1023" step="1" name="intensity" value="128" />
+        <span class="label">Mode: </span><input type="number" min="1" max="2" step="1" name="mode" value="1" /><br/>
+        <span class="label">Speed: </span><input type="number" min="0.2" max="20" step="0.2" name="speed" value="0.2" />
+        <span class="label">Period: </span><input type="number" min="0.5" max="30" step="0.1" name="period" value="2" /><br/>
     </div>
 
 </body>
