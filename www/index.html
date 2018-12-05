@@ -5,165 +5,17 @@
     <title>Evolve Lights</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
 
-    <style>
-        body {
-            background-color: #eee;
-            font-family: Helvetica;
-        }
-
-        div.btn {
-            display: inline-block;
-            width: 150px;
-            padding: 10px 5px;
-            margin: 5px;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        div.btn:hover {
-            background-color: #222 !important;
-            color: #fff;
-        }
-
-        input[type="number"] {
-            width: 80px;
-            padding: 10px 5px;
-            margin: 5px;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        span.label {
-            display: inline-block;
-            width: 80px;
-            font-weight: bold;
-        }
-
-        #colorPicker
-        {
-            width:          30px;
-            height:         30px;
-            position: relative;
-            clear: both;
-            margin: 80px auto 20px;
-        }
-
-        #colorPicker .track {
-            background:     #EFEFEF url(img/text-color.png) no-repeat 50% 50%;
-            height:         150px;
-            width:          150px;
-            padding:        10px;
-            position:       absolute;
-            cursor:         crosshair;
-            float:          left;
-            left:           -71px;
-            top:            -71px;
-            display:        none;
-            border:         1px solid #ccc;
-            z-index:        10;
-            -webkit-border-radius: 150px;
-            -moz-border-radius: 150px;
-            border-radius: 150px;
-
-        }
-
-        #colorPicker .color {
-            width:          25px;
-            height:         25px;
-            padding:        1px;
-            border:         1px solid #ccc;
-            display:        block;
-            position:       relative;
-            z-index:        11;
-            background-color: #EFEFEF;
-            -webkit-border-radius: 27px;
-            -moz-border-radius: 27px;
-            border-radius: 27px;
-            cursor: pointer;
-        }
-
-        #colorPicker .colorInner {
-            width:          25px;
-            height:         25px;
-            -webkit-border-radius: 27px;
-            -moz-border-radius: 27px;
-            border-radius: 27px;
-        }
-
-        #colorPicker .dropdown {
-            list-style: none;
-            display: none;
-            width: 27px;
-            position: absolute;
-            top: 28px;
-            border: 1px solid #ccc;
-            left: 0;
-            z-index: 1000;
-        }
-
-        #colorPicker .dropdown li{
-            height: 25px;
-            cursor: pointer;
-        }
-
-    </style>
-
-    <script type="text/javascript">
-        !function(a){"use strict";function b(){for(var a=1;a<arguments.length;a++)for(var b in arguments[a])arguments[a].hasOwnProperty(b)&&(arguments[0][b]=arguments[a][b]);return arguments[0]}function c(c,f){function g(){return s&&(o=document.createElement("canvas"),l.appendChild(o),q=o.getContext("2d"),h()),i(),k}function h(){var b=new Image,c=l.currentStyle||a.getComputedStyle(l,!1),d=c.backgroundImage.replace(/"/g,"").replace(/url\(|\)$/gi,"");b.crossOrigin="Anonymous",l.style.backgroundImage="none",b.onload=function(){o.width=this.width,o.height=this.height,q.drawImage(b,0,0,this.width,this.height)},b.src=k.options.backgroundUrl||d}function i(){var a=t?"touchstart":"mousedown";s&&(m["on"+a]=function(a){a.preventDefault(),a.stopPropagation(),l.style.display="block",document.onmousedown=function(){document.onmousedown=null,k.close()}},t?(o.ontouchstart=function(a){return r=!0,j(a.touches[0]),!1},o.ontouchmove=function(a){return j(a.touches[0]),!1},o.ontouchend=function(){return k.close(),!1}):(o.onmousedown=function(a){a.preventDefault(),a.stopPropagation(),r=!0,j(a),document.onmouseup=function(){return document.onmouseup=null,k.close(),!1}},o.onmousemove=j))}function j(a){if(r){var b=a.target.getBoundingClientRect(),d=q.getImageData(a.clientX-b.left,a.clientY-b.top,1,1).data;k.setColor("rgb("+d[0]+","+d[1]+","+d[2]+")"),c.dispatchEvent(u,[k.colorHex,k.colorRGB])}}this.options=b({},e,f),this._defaults=e,this._name=d;var k=this,l=c.querySelectorAll(".track")[0],m=c.querySelectorAll(".color")[0],n=c.querySelectorAll(".colorInner")[0],o=null,p=c.querySelectorAll(".colorInput")[0],q=null,r=!1,s=!!document.createElement("canvas").getContext,t="ontouchstart"in document.documentElement,u=document.createEvent("HTMLEvents");return u.initEvent("change",!0,!0),this.colorHex="",this.colorRGB="",this.setColor=function(a){a.indexOf("#")>=0?(k.colorHex=a,k.colorRGB=k.hexToRgb(k.colorHex)):(k.colorRGB=a,k.colorHex=k.rgbToHex(k.colorRGB)),n.style.backgroundColor=k.colorHex,p.value=k.colorHex},this.close=function(){r=!1,l.style.display="none"},this.hexToRgb=function(a){var b=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(a);return"rgb("+parseInt(b[1],16)+","+parseInt(b[2],16)+","+parseInt(b[3],16)+")"},this.rgbToHex=function(a){function b(a){var b=new Array("0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F");return isNaN(a)?"00":b[(a-a%16)/16]+b[a%16]}var c=a.match(/\d+/g);return"#"+b(c[0])+b(c[1])+b(c[2])},g()}var d="tinycolorpicker",e={backgroundUrl:null},f=function(a,b){return new c(a,b)};"function"==typeof define&&define.amd?define(function(){return f}):"object"==typeof module&&module.exports?module.exports=f:a.tinycolorpicker=f}(window);
-    </script>
-
-    <script type="text/javascript">
-
-        window.onload = function()
-        {
-            var $picker = document.getElementById("colorPicker"), picker = tinycolorpicker($picker);
-            var ws = new WebSocket("ws://192.168.4.1:80");
-
-            ws.onmessage = function (evt) {
-                //resp = JSON.parse(evt.data)
-                document.getElementById("response").innerHTML = evt.data;
-            };
-
-            $picker.addEventListener('change', function(e) {
-                ws.send(JSON.stringify({
-                    command: "color",
-                    hex_color: e.target.querySelector('.colorInput').value,
-                    intensity: parseInt(document.querySelector('input[name="intensity"]').value)
-                }))
-            }, false)
-
-            Array.prototype.forEach.call(document.getElementsByClassName("command"), function(element) {
-                element.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    var action = element.getAttribute('data-action');
-                    var payload = {command: action}
-
-                    if (!['cancel', 'tasks', 'status'].includes(action)) {
-                        payload['intensity'] = parseInt(document.querySelector('input[name="intensity"]').value);
-                    }
-
-                    if (action == 'fade') {
-                        payload['period'] = parseFloat(document.querySelector('input[name="period"]').value);
-                    } else if (action == 'jump') {
-                        payload['mode'] = parseInt(document.querySelector('input[name="mode"]').value);
-                        payload['speed'] = parseFloat(document.querySelector('input[name="speed"]').value);
-                    }
-
-                    ws.send(JSON.stringify(payload));
-
-                }, false);
-            })
-        }
-
-    </script>
-
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/tinycolorpicker.min.js"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
 
+    <textarea id="response" style="width: 80%; height: 50px; font-family: 'Lucida Console', Monaco, monospace;">response</textarea>
+
+    <div class="battery">
+      <div class="battery-level" style="height:100%;"></div>
+    </div>
 
     <div id="colorPicker">
         <a class="color"><div class="colorInner"></div></a>
@@ -172,36 +24,47 @@
         <input type="hidden" class="colorInput"/>
     </div>
 
+
     <div style="text-align: center; margin-top: 80px;">
-        <textarea id="response" style="width: 90%; height: 50px; font-family: 'Lucida Console', Monaco, monospace;">response</textarea>
 
         <hr/>
 
-        <div class="btn command" data-action="front" style="background-color: white;">FRONT</div>
-        <div class="btn command" data-action="tail" style="background-color: darkred; color: white;">TAIL</div>
+        <div class="btn command" data-action="front" style="background-color: #ffffff;">FRONT</div><br/>
+        <div class="btn command" data-action="tail" style="background-color: #b02f23; color: #ffffff;">TAIL - STATIC</div>
+        <div class="btn command" data-action="blink_tail" style="background-color: #ff385d; color: #ffffff;">TAIL - BLINK</div>
 
         <hr/>
 
-
-        <div class="btn command" data-action="police" style="background-color: blue; color: white;">POLICE</div>
-        <div class="btn command" data-action="jump" style="background-color: orange">JUMP</div><br/>
-        <div class="btn command" data-action="fade" style="background-color: limegreen; color: white;">FADE</div>
+        <span class="label">Intense: </span><br/><input class="slider" type="range" min="0" max="100" step="10" name="intensity" value="50" /><br/>
 
         <hr/>
 
-
-        <div class="btn command" data-action="tasks" style="background-color: #FFC300; ">SHOW TASKS</div>
-        <div class="btn command" data-action="status" style="background-color: #16A085;">STATUS</div><br/>
-
-        <div class="btn command" data-action="cancel" style="background-color: red; color: white;">STOP</div>
+        <div class="btn command" data-action="police" style="background-color: #0000ff; color: #ffffff;">POLICE</div> <br/>
 
         <hr/>
 
-        <span class="label">Intense: </span><input type="number" min="0" max="1023" step="1" name="intensity" value="128" />
-        <span class="label">Mode: </span><input type="number" min="1" max="2" step="1" name="mode" value="1" /><br/>
-        <span class="label">Speed: </span><input type="number" min="0.2" max="20" step="0.2" name="speed" value="0.2" />
-        <span class="label">Period: </span><input type="number" min="0.5" max="30" step="0.1" name="period" value="2" /><br/>
+        <div class="switch">
+          <input type="radio" class="switch-input" name="mode" value="2" id="week" checked>
+          <label for="week" class="switch-label switch-label-off">3</label>
+          <input type="radio" class="switch-input" name="mode" value="1" id="month">
+          <label for="month" class="switch-label switch-label-on">6</label>
+          <span class="switch-selection"></span>
+        </div>
+
+        <span class="label">Speed: </span><br/>
+        <input class="slider speed" type="range" min="0.1" max="10.1" step="0.2" name="speed" value="0.2" /><br/>
+
+        <div class="btn command" data-action="jump" style="background-color: #ffa500;">JUMP</div>
+
+        <hr/>
+
+        <span class="label">Period: </span><br/><input class="slider" type="range" min="0.5" max="30" step="0.1" name="period" value="2" /><br/>
+        <div class="btn command" data-action="fade" style="background-color: #32cd32; color: #ffffff;">FADE</div>
+
+        <hr/>
+
+        <div class="btn command" data-action="cancel" style="background-color: #ff0000; color: #ffffff;">STOP</div>
+
     </div>
-
 </body>
 </html>

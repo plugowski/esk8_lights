@@ -9,10 +9,9 @@ import network
 ap = network.WLAN(network.AP_IF)
 ap.active(True)
 ap.config(essid=b"Evolve Bamboo GT", authmode=network.AUTH_WPA_WPA2_PSK, password=b"MyBambooGT")
-lights = Lights(14, 16, 12, 26, 27)
-battery = Battery(33, max_value=8.2)
+lights = Lights(27, 16, 12, 26, 32)
+battery = Battery(33)
 app_socket = webserver.Server(LightsService(lights, battery))
-
 
 try:
 

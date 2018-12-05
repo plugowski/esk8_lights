@@ -19,7 +19,7 @@ class Client(WebSocketClient):
 
     def __init__(self, conn, lights_service: LightsService):
         self.lights_service = lights_service
-        asyncio.get_event_loop().call_soon(lights_service.status_worker(conn))
+        asyncio.get_event_loop().call_soon(self.lights_service.status_worker(conn, 0.1))
         super().__init__(conn)
 
     def process(self):
@@ -35,11 +35,9 @@ class Client(WebSocketClient):
 
             if command is not None:
 
-                if command in ['front', 'tail', 'color', 'jump', 'fade', 'police', 'cancel']:
+                if command in ['front', 'tail', 'blink_tail', 'color', 'jump', 'fade', 'police', 'cancel']:
                     loop.call_soon(self.lights_service.action_handler(command, **msg))
                     self.connection.write(command + ' : ' + ujson.dumps(msg))
-                elif command == 'tasks':
-                    self.connection.write(ujson.dumps(asyn.Cancellable.tasks))
                 elif command == 'status':
                     self.connection.write(ujson.dumps(self.lights_service.read_status()))
                 else:

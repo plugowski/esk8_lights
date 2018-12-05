@@ -11,10 +11,15 @@ class Battery:
         self.max = max_value
 
     def status(self) -> dict:
-        voltage = self.adc.read() / 4095 * self.max
-        percentage = 0 if voltage < self.min else round((voltage - self.min) / (self.max - self.min) * 100, 2)
+
+        voltage_sum = 0
+        for i in range(20):
+            voltage_sum += self.adc.read()
+
+        voltage = (voltage_sum / 20) / 3134 * self.max
+        percentage = 0 if voltage < self.min else (voltage - self.min) / (self.max - self.min) * 100
 
         return {
-            'voltage': voltage,
-            'percentage': percentage
+            'voltage': round(voltage, 2),
+            'percentage': round(percentage, 2)
         }
